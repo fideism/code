@@ -1,3 +1,3 @@
-module note
+module github.com/fideism/code
 
-go 1.14
+go 1.15
