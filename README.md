@@ -1,3 +1,4 @@
 # 开发日志
 
-- golang线程同步[golang-WaitGroup](./pool)
+- go：线程同步[go-WaitGroup-pool](./pool/pool.go)
+- go：mqtt[go-mqtt](./message/mqtt.go)
