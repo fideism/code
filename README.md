@@ -6,3 +6,4 @@
 - go：百度短链 [baidu_short_url](./baidu_short_url/main.go)
 - go：zap [zap_log](./logger)
 - go：gin公用请求返回接口 [gin-common](./gin)
+- [restful-api参考规范](./restful-api.md)
