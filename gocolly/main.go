@@ -53,6 +53,9 @@ func main() {
 
 	c.OnScraped(func(r *colly.Response) {
 		fmt.Println("Finished", r.Request.URL)
+
+		// git提交
+		execCmd(fmt.Sprintf(`cd %s && git add . && git commit -m '%s' && git push origin main`, config.Setting.Gocolly.RepositoryPath, time.Now().String()))
 	})
 
 	// gitee 最新推荐
@@ -94,8 +97,6 @@ func dealProject(data project) {
 	// 保存记录
 	writeReadme(data)
 
-	// git提交
-	execCmd(fmt.Sprintf(`git add . && git commit -m '%s' && git push origin main`, time.Now().String()))
 }
 
 func writeReadme(data project) {
