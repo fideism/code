@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
 	"os/exec"
+	"time"
 
 	"github.com/fideism/code/internal/util"
 
@@ -19,11 +22,20 @@ func init() {
 		panic("请指定配置文件位置")
 	}
 	config.Load(conf)
-
 }
 
+var f *os.File
+
 func main() {
-	fmt.Println(config.Setting.Gocolly)
+	var err error
+	fmt.Println(fmt.Sprintf(`%s/gitee.md`, config.Setting.Gocolly.RepositoryPath))
+	f, err = os.OpenFile(fmt.Sprintf(`%s/gitee.md`, config.Setting.Gocolly.RepositoryPath), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Println(`处理日志文件失败`, err.Error())
+	}
+
+	defer f.Close()
+
 	c := colly.NewCollector(colly.UserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36`), colly.MaxDepth(1))
 
 	c.OnRequest(func(r *colly.Request) {
@@ -33,10 +45,6 @@ func main() {
 		fmt.Println("Visited", r.Request.URL)
 	})
 	c.OnHTML("a[class='title project-namespace-path']", func(element *colly.HTMLElement) {
-		href := element.Attr(`href`)
-		fmt.Println(fmt.Sprintf(`https://gitee.com%s.git`, href))
-		fmt.Println(element.Text)
-		fmt.Println(fmt.Sprintf(fmt.Sprintf(`%s%s`, config.Setting.Gocolly.RepositoryPath, href)))
 		dealProject(project{
 			Href: element.Attr(`href`),
 			Name: element.Text,
@@ -59,8 +67,7 @@ type project struct {
 }
 
 func dealProject(data project) {
-	fmt.Println(fmt.Sprintf(`https://gitee.com%s.git`, data.Href))
-	fmt.Println(data.Name)
+	fmt.Println(`开始处理`, data)
 	dir := fmt.Sprintf(`%s%s`, config.Setting.Gocolly.RepositoryPath, data.Href)
 
 	if err := util.DelDir(dir); nil != err {
@@ -79,9 +86,26 @@ func dealProject(data project) {
 		return
 	}
 
+	if err := util.DelDir(fmt.Sprintf(`%s/.git`, dir)); nil != err {
+		_ = fmt.Sprintf(`删除git文件目录失败:%s`, err.Error())
+		return
+	}
+
+	// 保存记录
+	writeReadme(data)
+
+	// git提交
+	execCmd(fmt.Sprintf(`git add . && git commit -m '%s' && git push origin main`, time.Now().String()))
 }
 
-// DelDir 删除文件夹
+func writeReadme(data project) {
+
+	content := fmt.Sprintf("- [%s](https://gitee.com%s)\n", data.Name, data.Href)
+
+	fmt.Println(io.WriteString(f, content))
+}
+
+// execCmd xxx
 func execCmd(c string) error {
 	cmd := exec.Command("/bin/bash", "-c", c)
 
