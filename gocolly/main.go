@@ -34,7 +34,7 @@ func main() {
 		fmt.Println(`处理日志文件失败`, err.Error())
 	}
 
-	fmt.Println(io.WriteString(f, fmt.Sprintf("\n\n**%s**", time.Now().Format(`2006-01-02`))))
+	fmt.Println(io.WriteString(f, fmt.Sprintf("\n\n**%s**\n", time.Now().Format(`2006-01-02`))))
 
 	defer f.Close()
 
