@@ -8,9 +8,8 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/fideism/code/internal/util"
-
 	"github.com/fideism/code/internal/config"
+	"github.com/fideism/code/internal/util"
 	"github.com/gocolly/colly"
 )
 
@@ -28,8 +27,8 @@ var f *os.File
 
 func main() {
 	var err error
-	fmt.Println(fmt.Sprintf(`%s/gitee.md`, config.Setting.Gocolly.RepositoryPath))
-	f, err = os.OpenFile(fmt.Sprintf(`%s/gitee.md`, config.Setting.Gocolly.RepositoryPath), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	fmt.Println(fmt.Sprintf(`%s/releases/%s.md`, config.Setting.Gocolly.RepositoryPath, time.Now().Format(`2006-01-02`)))
+	f, err = os.OpenFile(fmt.Sprintf(`%s/releases/%s.md`, config.Setting.Gocolly.RepositoryPath, time.Now().Format(`2006-01-02`)), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println(`处理日志文件失败`, err.Error())
 	}
