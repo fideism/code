@@ -27,8 +27,9 @@ var f *os.File
 
 func main() {
 	var err error
-	fmt.Println(fmt.Sprintf(`%s/releases/%s.md`, config.Setting.Gocolly.RepositoryPath, time.Now().Format(`2006-01-02`)))
-	f, err = os.OpenFile(fmt.Sprintf(`%s/releases/%s.md`, config.Setting.Gocolly.RepositoryPath, time.Now().Format(`2006-01-02`)), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	path := releaseDir()
+	fmt.Println(fmt.Sprintf(`%s/%s.md`, path, time.Now().Format(`2006-01-02`)))
+	f, err = os.OpenFile(fmt.Sprintf(`%s/%s.md`, path, time.Now().Format(`2006-01-02`)), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println(`处理日志文件失败`, err.Error())
 	}
@@ -68,6 +69,19 @@ func main() {
 type project struct {
 	Name string
 	Href string
+}
+
+func releaseDir() string {
+	path := fmt.Sprintf(`%s/releases/%s`, config.Setting.Gocolly.RepositoryPath, time.Now().Format(`2006-01`))
+
+	if err := util.Mkdir(path); nil != err {
+		fmt.Println(fmt.Sprintf(`创建文件夹失败:%s`, err.Error()))
+
+		return fmt.Sprintf(`%s/releases`, config.Setting.Gocolly.RepositoryPath)
+	}
+
+	return path
+
 }
 
 func dealProject(data project) {
