@@ -65,7 +65,7 @@ func main() {
 		fmt.Println("Finished", r.Request.URL)
 
 		// git提交
-		//execCmd(fmt.Sprintf(`cd %s && git add . && git commit -m '%s' && git push origin master`, config.Setting.Gocolly.RepositoryPath, time.Now().String()))
+		execCmd(fmt.Sprintf(`cd %s && git add . && git commit -m '%s' && git push origin master`, config.Setting.Gocolly.RepositoryPath, time.Now().String()))
 	})
 
 	// gitee 最新推荐 热门推荐 今日热门
