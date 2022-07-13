@@ -50,9 +50,9 @@ func main() {
 		fmt.Println("Visited", r.Request.URL)
 	})
 	c.OnHTML("div[class='explore-trending-projects__list-item']", func(element *colly.HTMLElement) {
-		href, _ := element.DOM.Find(`a`).Attr(`href`)
+		href, _ := element.DOM.Find(`a`).First().Attr(`href`)
 		desc := element.DOM.Find("div[class='description']").Last().Text()
-		title := element.DOM.Find("a").Text()
+		title := element.DOM.Find("a").First().Text()
 
 		dealProject(project{
 			Href:        strings.Trim(href, ``),
