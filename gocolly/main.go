@@ -25,6 +25,8 @@ func init() {
 
 var f *os.File
 
+var count int
+
 func main() {
 	var err error
 	path := releaseDir()
@@ -86,7 +88,12 @@ func releaseDir() string {
 
 func dealProject(data project) {
 	fmt.Println(`开始处理`, data)
-	dir := fmt.Sprintf(`%s%s`, config.Setting.Gocolly.RepositoryPath, data.Href)
+	count = count + 1
+	if count > 5 {
+		fmt.Println(`已处理文件数量大于5，跳过`)
+		return
+	}
+	dir := fmt.Sprintf(`%s/%s%s`, config.Setting.Gocolly.RepositoryPath, time.Now().Format(`200601`), data.Href)
 
 	if err := util.DelDir(dir); nil != err {
 		_ = fmt.Sprintf(`删除文件夹[%s]错误:%s\n`, dir, err.Error())
